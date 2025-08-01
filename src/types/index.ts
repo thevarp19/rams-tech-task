@@ -22,8 +22,8 @@ export interface CalculatorForm {
 export interface CalculatorState {
     form: CalculatorForm;
     payments: Payment[];
-    fullPrice: number; // Полная стоимость квартиры
-    apartmentArea: number; // Площадь квартиры в м²
+    fullPrice: number;
+    apartmentArea: number;
     isValid: boolean;
 }
 
@@ -51,7 +51,6 @@ export interface ValidationError {
     message: string;
 }
 
-// Zod schemas for validation
 export const PaymentFormSchema = {
     paymentForm: ["20%", "30%"] as const,
     deposit: { min: 0, max: 100000000 },

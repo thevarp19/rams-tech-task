@@ -5,17 +5,16 @@ import {
     Payment,
     PaymentType,
 } from "../types";
-import { addMonths } from "../utils/dateUtils";
+import { addMonths } from "../utils/dateUtils.js";
 
-// Константы для расчетов
-const FULL_PRICE = 25558146; // 25 558 146 ₸
-const APARTMENT_AREA = 39; // 39 м²
+const FULL_PRICE = 26558146;
+const APARTMENT_AREA = 45;
 
 const initialForm: CalculatorForm = {
     paymentForm: "30%",
     deposit: 5000000,
     prepayment: 5000000,
-    prepaymentDate: new Date(2025, 7, 1), // 01.08.2025
+    prepaymentDate: new Date(2025, 7, 1),
     quantityPayments: 12,
 };
 
@@ -27,7 +26,6 @@ const initialState: CalculatorState = {
     isValid: true,
 };
 
-// Utility functions
 const generatePaymentId = () => `payment-${Date.now()}-${Math.random()}`;
 
 const calculateTrancheAmount = (
@@ -44,16 +42,14 @@ const generatePayments = (
 ): Payment[] => {
     const payments: Payment[] = [];
 
-    // Добавляем задаток
     payments.push({
         id: generatePaymentId(),
         type: "Задаток" as PaymentType,
         day: 1,
-        date: new Date(2025, 7, 1), // Июль 2025
+        date: new Date(2025, 7, 1),
         amount: form.deposit,
     });
 
-    // Добавляем ПВ
     payments.push({
         id: generatePaymentId(),
         type: "ПВ" as PaymentType,
@@ -62,7 +58,6 @@ const generatePayments = (
         amount: form.prepayment,
     });
 
-    // Добавляем транши
     const trancheAmount = calculateTrancheAmount(form, fullPrice);
     const firstTrancheDate = addMonths(form.prepaymentDate, 1);
 
@@ -86,7 +81,7 @@ const calculatorSlice = createSlice({
     reducers: {
         updateForm: (state, action: PayloadAction<Partial<CalculatorForm>>) => {
             state.form = { ...state.form, ...action.payload };
-            // Пересчитываем платежи при изменении формы
+
             state.payments = generatePayments(state.form, state.fullPrice);
         },
 
@@ -97,8 +92,53 @@ const calculatorSlice = createSlice({
             const payment = state.payments.find(
                 (p) => p.id === action.payload.id
             );
-            if (payment) {
+            if (payment && payment.type === "Транш") {
                 payment.amount = action.payload.amount;
+
+                const tranchePayments = state.payments.filter(
+                    (p) => p.type === "Транш"
+                );
+                const remainingAmount =
+                    state.fullPrice -
+                    state.form.deposit -
+                    state.form.prepayment;
+
+                if (payment.amount >= remainingAmount) {
+                    payment.amount = remainingAmount;
+                    tranchePayments
+                        .filter((p) => p.id !== payment.id)
+                        .forEach((p) => (p.amount = 0));
+                } else {
+                    const otherTranches = tranchePayments.filter(
+                        (p) => p.id !== payment.id
+                    );
+                    const otherTotal = otherTranches.reduce(
+                        (sum, p) => sum + p.amount,
+                        0
+                    );
+                    const diffToDistribute =
+                        remainingAmount - (payment.amount + otherTotal);
+
+                    if (otherTranches.length > 0 && diffToDistribute !== 0) {
+                        const perTranche = Math.floor(
+                            diffToDistribute / otherTranches.length
+                        );
+                        let leftover =
+                            diffToDistribute -
+                            perTranche * otherTranches.length;
+
+                        otherTranches.forEach((p) => {
+                            p.amount += perTranche;
+                            if (p.amount < 0) {
+                                leftover += p.amount;
+                                p.amount = 0;
+                            }
+                        });
+
+                        payment.amount += leftover;
+                        if (payment.amount < 0) payment.amount = 0;
+                    }
+                }
             }
         },
 
@@ -110,20 +150,16 @@ const calculatorSlice = createSlice({
             const [moved] = state.payments.splice(oldIndex, 1);
             state.payments.splice(newIndex, 0, moved);
 
-            // Пересчитываем номера и даты после перестановки
-            state.payments.forEach((payment, index) => {
+            let trancheIndex = 0;
+            state.payments.forEach((payment) => {
                 if (payment.type === "Транш") {
-                    // Обновляем даты траншей с учетом нового порядка
-                    const trancheIndex = state.payments
-                        .slice(0, index)
-                        .filter((p) => p.type === "Транш").length;
-
                     const firstTrancheDate = addMonths(
                         state.form.prepaymentDate,
                         1
                     );
                     payment.date = addMonths(firstTrancheDate, trancheIndex);
                     payment.day = payment.date.getDate();
+                    trancheIndex++;
                 }
             });
         },
@@ -137,23 +173,28 @@ const calculatorSlice = createSlice({
                 ? addMonths(lastTranche.date, 1)
                 : addMonths(state.form.prepaymentDate, 1);
 
-            const trancheAmount = calculateTrancheAmount(
-                state.form,
-                state.fullPrice
-            );
-
             state.payments.push({
                 id: generatePaymentId(),
                 type: "Транш",
                 day: newDate.getDate(),
                 date: newDate,
-                amount: Math.round(trancheAmount),
+                amount: 0,
             });
 
-            // Обновляем количество платежей в форме
             state.form.quantityPayments = state.payments.filter(
                 (p) => p.type === "Транш"
             ).length;
+
+            const tranchePayments = state.payments.filter(
+                (p) => p.type === "Транш"
+            );
+            const remainingAmount =
+                state.fullPrice - state.form.deposit - state.form.prepayment;
+            const trancheAmount = remainingAmount / tranchePayments.length;
+
+            tranchePayments.forEach((payment) => {
+                payment.amount = Math.round(trancheAmount);
+            });
         },
 
         removePayment: (state, action: PayloadAction<string>) => {
@@ -162,7 +203,7 @@ const calculatorSlice = createSlice({
             );
             if (paymentIndex !== -1) {
                 const payment = state.payments[paymentIndex];
-                // Можно удалять только транши и должен остаться хотя бы один транш
+
                 if (payment.type === "Транш") {
                     const trancheCount = state.payments.filter(
                         (p) => p.type === "Транш"
@@ -172,6 +213,20 @@ const calculatorSlice = createSlice({
                         state.form.quantityPayments = state.payments.filter(
                             (p) => p.type === "Транш"
                         ).length;
+
+                        const tranchePayments = state.payments.filter(
+                            (p) => p.type === "Транш"
+                        );
+                        const remainingAmount =
+                            state.fullPrice -
+                            state.form.deposit -
+                            state.form.prepayment;
+                        const trancheAmount =
+                            remainingAmount / tranchePayments.length;
+
+                        tranchePayments.forEach((payment) => {
+                            payment.amount = Math.round(trancheAmount);
+                        });
                     }
                 }
             }

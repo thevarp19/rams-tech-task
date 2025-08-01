@@ -16,63 +16,60 @@ const SummaryPanel: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            {/* Стоимость */}
-            <div className="bg-primary text-white rounded-lg p-6">
+            <div className="bg-primary text-white rounded-lg px-3 py-2">
                 <h3 className="text-sm text-white/80 mb-2">Стоимость, ₸:</h3>
-                <p className="text-2xl font-bold">
+                <p className="text-lg font-bold">
                     {formatCurrencyWithSymbol(metrics.totalCost)}
                 </p>
             </div>
 
-            {/* Цена за м² */}
-            <div className="bg-primary text-white rounded-lg p-6">
+            <div className="bg-primary text-white rounded-lg px-3 py-2">
                 <h3 className="text-sm text-white/80 mb-2">Цена за м², ₸:</h3>
-                <p className="text-2xl font-bold">
+                <p className="text-lg font-bold">
                     {formatCurrencyWithSymbol(metrics.pricePerSqm)}
                 </p>
             </div>
 
-            {/* ПВ + Задаток */}
-            <div className="bg-white border border-border rounded-lg p-6">
-                <h3 className="text-sm text-text-secondary mb-2">
-                    ПВ+ Задаток
-                </h3>
-                <p className="text-2xl font-bold text-text mb-2">
-                    {formatCurrencyWithSymbol(metrics.depositPlusPrepayment)}
-                </p>
-                <p className="text-lg text-accent font-medium">
-                    {metrics.depositPlusPrepaymentPercent}%
-                </p>
+            <div className="bg-white rounded-lg px-3 py-2">
+                <h3 className="text-sm text-[#343434] mb-2">ПВ + Задаток</h3>
+                <div className="flex gap-2 divide-x-[1px] divide-[#626262] ">
+                    <p className="text-lg leading-none font-bold text-[#024638] ">
+                        {formatCurrencyWithSymbol(
+                            metrics.depositPlusPrepayment
+                        )}
+                    </p>
+                    <p className="text-lg text-accent leading-none font-bold ps-2">
+                        {metrics.depositPlusPrepaymentPercent}%
+                    </p>
+                </div>
             </div>
 
-            {/* Разбивка по годам */}
             <div className="space-y-3">
                 {metrics.yearlyBreakdown.map((yearData, index) => (
                     <div
                         key={yearData.year}
-                        className="bg-white border border-border rounded-lg p-4"
+                        className="bg-white rounded-lg px-3 py-2"
                     >
-                        <div className="flex items-center justify-between mb-2">
-                            <h4 className="text-sm text-text-secondary">
-                                за{" "}
-                                {index === 0
-                                    ? "1 год"
-                                    : index === 1
-                                    ? "2 года"
-                                    : `${index + 1} года`}
-                            </h4>
-                            <span className="text-lg font-bold text-accent">
+                        <h4 className="text-sm text-[#343434]">
+                            за{" "}
+                            {index === 0
+                                ? "1 год"
+                                : index === 1
+                                ? "2 года"
+                                : `${index + 1} года`}
+                        </h4>
+                        <div className="flex gap-2 divide-x-[1px] divide-[#626262] ">
+                            <p className="text-lg leading-none font-bold text-[#024638] ">
+                                {formatCurrencyWithSymbol(yearData.amount)}
+                            </p>
+                            <p className="text-lg text-accent leading-none font-bold ps-2">
                                 {yearData.percent}%
-                            </span>
+                            </p>
                         </div>
-                        <p className="text-xl font-bold text-text">
-                            {formatCurrencyWithSymbol(yearData.amount)}
-                        </p>
                     </div>
                 ))}
             </div>
 
-            {/* Дополнительная информация */}
             <div className="bg-border-light rounded-lg p-4 text-center">
                 <div className="space-y-2 text-sm text-text-secondary">
                     <p>

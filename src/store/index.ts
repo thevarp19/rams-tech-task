@@ -10,11 +10,8 @@ export const store = configureStore({
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {
-                // Ignore these action types
                 ignoredActions: [],
-                // Ignore these field paths in all actions
                 ignoredActionsPaths: [],
-                // Ignore these paths in the state
                 ignoredPaths: [
                     "calculator.form.prepaymentDate",
                     "calculator.payments.*.date",

@@ -21,7 +21,13 @@ export const calculatorFormSchema = z
             .date({
                 message: "Дата ПВ обязательна",
             })
-            .min(new Date(), "Дата ПВ не может быть в прошлом"),
+            .refine((date) => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const inputDate = new Date(date);
+                inputDate.setHours(0, 0, 0, 0);
+                return inputDate >= today;
+            }, "Дата ПВ не может быть в прошлом"),
         quantityPayments: z
             .number({
                 message: "Количество платежей обязательно",
@@ -32,8 +38,6 @@ export const calculatorFormSchema = z
     })
     .refine(
         () => {
-            // Validation that deposit + prepayment should not exceed full price
-            // This will be handled in component level with fullPrice context
             return true;
         },
         {

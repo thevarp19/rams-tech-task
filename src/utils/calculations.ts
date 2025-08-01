@@ -24,15 +24,13 @@ export const calculateSummaryMetrics = (
     const prepayment = payments.find((p) => p.type === "ПВ")?.amount || 0;
     const depositPlusPrepayment = deposit + prepayment;
 
-    // Цена за м²
     const pricePerSqm = Math.round(fullPrice / apartmentArea);
 
-    // Процент от общей стоимости
-    const depositPlusPrepaymentPercent = Math.round(
-        (depositPlusPrepayment / fullPrice) * 100
-    );
+    const depositPlusPrepaymentPercent = +(
+        (depositPlusPrepayment / fullPrice) *
+        100
+    ).toFixed(1);
 
-    // Разбивка по годам
     const dates = payments.map((p) => p.date);
     const { minYear, maxYear } = getDateRange(dates);
 
@@ -40,7 +38,7 @@ export const calculateSummaryMetrics = (
     for (let year = minYear; year <= maxYear; year++) {
         const yearPayments = payments.filter((p) => isDateInYear(p.date, year));
         const yearAmount = yearPayments.reduce((sum, p) => sum + p.amount, 0);
-        const yearPercent = Math.round((yearAmount / fullPrice) * 100);
+        const yearPercent = +((yearAmount / fullPrice) * 100).toFixed(1);
 
         if (yearAmount > 0) {
             yearlyBreakdown.push({

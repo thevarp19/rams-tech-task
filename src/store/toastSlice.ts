@@ -17,7 +17,7 @@ const toastSlice = createSlice({
             const id = `toast-${Date.now()}-${Math.random()}`;
             const toast: ToastMessage = {
                 id,
-                duration: 5000, // 5 seconds default
+                duration: 1500,
                 ...action.payload,
             };
             state.messages.push(toast);

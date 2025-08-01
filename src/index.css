@@ -1,11 +1,9 @@
-/* react-datepicker styles */
 @import "react-datepicker/dist/react-datepicker.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles */
 * {
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -14,15 +12,15 @@
 }
 
 body {
-    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-family: "TT Interfaces", system-ui, Avenir, Helvetica, Arial,
+        sans-serif;
     color: theme("colors.text.DEFAULT");
     background-color: #ffffff;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -38,50 +36,86 @@ body {
     background: rgba(140, 140, 140, 0.9);
 }
 
-/* Slider custom styles */
-input[type="range"] {
+.slider {
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
     cursor: pointer;
-}
-
-input[type="range"]::-webkit-slider-track {
-    background: theme("colors.border.light");
-    height: 8px;
+    outline: none;
+    height: 1px;
     border-radius: 4px;
 }
 
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background: theme("colors.primary.DEFAULT");
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-input[type="range"]::-moz-range-track {
-    background: theme("colors.border.light");
-    height: 8px;
+.slider::-webkit-slider-track {
+    background: #f5f8f7;
+    height: 1px;
     border-radius: 4px;
     border: none;
 }
 
-input[type="range"]::-moz-range-thumb {
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background: theme("colors.primary.DEFAULT");
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.slider::-webkit-slider-runnable-track {
+    background: linear-gradient(
+        to right,
+        #024638 0%,
+        #024638 var(--progress, 0%),
+        #a0a0a0 var(--progress, 0%),
+        #a0a0a0 100%
+    );
+    height: 1px;
+    border-radius: 4px;
 }
 
-/* React DatePicker custom styles */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    background: #024638;
+    cursor: pointer;
+    border: 1px solid white;
+    box-shadow: 0 2px 8px rgba(2, 70, 56, 0.3);
+    position: relative;
+    top: -6px;
+}
+
+.slider::-moz-range-track {
+    background: #f5f8f7;
+    height: 1px;
+    border-radius: 4px;
+    border: none;
+}
+
+.slider::-moz-range-thumb {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background: #024638;
+    cursor: pointer;
+    border: 1px solid white;
+    box-shadow: 0 2px 8px rgba(2, 70, 56, 0.3);
+}
+
+.slider::-moz-range-progress {
+    background: #024638;
+    height: 1px;
+    border-radius: 4px;
+}
+
+.slider::-moz-range-track {
+    background: linear-gradient(
+        to right,
+        #024638 0%,
+        #024638 var(--progress),
+        #f5f8f7 var(--progress),
+        #f5f8f7 100%
+    );
+}
+
+.slider:focus {
+    outline: none;
+}
+
 .react-datepicker {
     border: 1px solid theme("colors.border.DEFAULT");
     border-radius: 8px;
@@ -111,7 +145,6 @@ input[type="range"]::-moz-range-thumb {
     background-color: theme("colors.border.light");
 }
 
-/* Focus styles */
 .focus-ring:focus {
     outline: 2px solid theme("colors.primary.DEFAULT");
     outline-offset: 2px;

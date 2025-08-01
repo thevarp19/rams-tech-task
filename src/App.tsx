@@ -12,36 +12,32 @@ const AppContent: React.FC = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        // Инициализируем платежи при загрузке приложения
         dispatch(initializePayments());
     }, [dispatch]);
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4">
+        <div className="min-h-screen p-4">
             <div className="max-w-7xl mx-auto">
-                <h1 className="text-3xl font-bold text-text text-center mb-8">
-                    Калькулятор рассрочки
-                </h1>
+                <div className="flex flex-col gap-8">
+                    <h1 className="text-3xl font-bold text-text ">
+                        Калькулятор
+                    </h1>
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+                        <div className="lg:col-span-1">
+                            <PaymentForm />
+                        </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    {/* Левая колонка - Форма */}
-                    <div className="lg:col-span-1">
-                        <PaymentForm />
-                    </div>
+                        <div className="lg:col-span-2">
+                            <PaymentsTable />
+                        </div>
 
-                    {/* Центральная колонка - Таблица */}
-                    <div className="lg:col-span-2">
-                        <PaymentsTable />
-                    </div>
-
-                    {/* Правая колонка - Сводка */}
-                    <div className="lg:col-span-1">
-                        <SummaryPanel />
+                        <div className="lg:col-span-1">
+                            <SummaryPanel />
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Toast уведомления */}
             <ToastContainer />
         </div>
     );
