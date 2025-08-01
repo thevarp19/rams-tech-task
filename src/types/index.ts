@@ -1,0 +1,61 @@
+export type PaymentType = "Задаток" | "ПВ" | "Транш";
+
+export type PaymentFormType = "20%" | "30%";
+
+export interface Payment {
+    id: string;
+    type: PaymentType;
+    day: number;
+    date: Date;
+    amount: number;
+    isEditable?: boolean;
+}
+
+export interface CalculatorForm {
+    paymentForm: PaymentFormType;
+    deposit: number;
+    prepayment: number;
+    prepaymentDate: Date;
+    quantityPayments: number;
+}
+
+export interface CalculatorState {
+    form: CalculatorForm;
+    payments: Payment[];
+    fullPrice: number; // Полная стоимость квартиры
+    apartmentArea: number; // Площадь квартиры в м²
+    isValid: boolean;
+}
+
+export interface SummaryMetrics {
+    totalCost: number;
+    pricePerSqm: number;
+    depositPlusPrepayment: number;
+    depositPlusPrepaymentPercent: number;
+    yearlyBreakdown: Array<{
+        year: number;
+        amount: number;
+        percent: number;
+    }>;
+}
+
+export interface ToastMessage {
+    id: string;
+    type: "success" | "error" | "warning" | "info";
+    message: string;
+    duration?: number;
+}
+
+export interface ValidationError {
+    field: string;
+    message: string;
+}
+
+// Zod schemas for validation
+export const PaymentFormSchema = {
+    paymentForm: ["20%", "30%"] as const,
+    deposit: { min: 0, max: 100000000 },
+    prepayment: { min: 0, max: 100000000 },
+    prepaymentDate: { min: new Date() },
+    quantityPayments: { min: 12, max: 48, step: 1 },
+};
