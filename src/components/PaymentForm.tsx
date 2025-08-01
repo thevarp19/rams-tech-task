@@ -24,14 +24,19 @@ const PaymentForm: React.FC = () => {
             paymentForm: form.paymentForm,
             deposit: form.deposit,
             prepayment: form.prepayment,
-            prepaymentDate: form.prepaymentDate,
+            prepaymentDate: new Date(form.prepaymentDate), // Convert string to Date for form
             quantityPayments: form.quantityPayments,
         },
         mode: "onChange",
     });
 
     const onSubmit = (data: CalculatorFormData) => {
-        dispatch(updateForm(data));
+        dispatch(
+            updateForm({
+                ...data,
+                prepaymentDate: data.prepaymentDate.toISOString(), // Convert Date to string for Redux
+            })
+        );
     };
 
     const watchedValues = useWatch({ control });
@@ -46,7 +51,7 @@ const PaymentForm: React.FC = () => {
                 updateForm({
                     paymentForm: watchedValues.paymentForm,
                     deposit: watchedValues.deposit,
-                    prepaymentDate: watchedValues.prepaymentDate,
+                    prepaymentDate: watchedValues.prepaymentDate?.toISOString(), // Convert Date to string
                     quantityPayments: watchedValues.quantityPayments,
                 })
             );

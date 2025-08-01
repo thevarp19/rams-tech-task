@@ -12,10 +12,7 @@ export const store = configureStore({
             serializableCheck: {
                 ignoredActions: [],
                 ignoredActionsPaths: [],
-                ignoredPaths: [
-                    "calculator.form.prepaymentDate",
-                    "calculator.payments.*.date",
-                ],
+                ignoredPaths: [],
             },
         }),
 });

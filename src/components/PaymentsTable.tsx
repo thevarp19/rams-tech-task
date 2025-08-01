@@ -309,51 +309,51 @@ const PaymentsTable: React.FC = () => {
     };
 
     return (
-        <div className=" max-h-[700px] overflow-y-auto px-2">
-            <div className="bg-white rounded-lg border border-border overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full ">
-                        <thead className="bg-[#2E3130] text-white">
-                            <tr>
-                                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider border-r-2 border-gray-600 h-[50px]">
-                                    №
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider border-r-2 border-gray-600 h-[50px]">
-                                    Тип оплаты
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider border-r-2 border-gray-600 h-[50px]">
-                                    День
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider border-r-2 border-gray-600 h-[50px]">
-                                    Дата
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider border-r-2 border-gray-600 h-[50px]">
-                                    Сумма, ₸
-                                </th>
-                                <th className="px-4 py-3 text-center text-xs font-medium tracking-wider">
-                                    <svg
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"
-                                    >
-                                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                                    </svg>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <DndContext
-                                sensors={sensors}
-                                collisionDetection={closestCenter}
-                                onDragEnd={handleDragEnd}
-                            >
-                                <SortableContext
-                                    items={payments
-                                        .filter((p) => p.type !== "Задаток")
-                                        .map((p) => p.id)}
-                                    strategy={verticalListSortingStrategy}
-                                >
+        <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+        >
+            <SortableContext
+                items={payments
+                    .filter((p) => p.type !== "Задаток")
+                    .map((p) => p.id)}
+                strategy={verticalListSortingStrategy}
+            >
+                <div className=" max-h-[700px] overflow-y-auto px-2">
+                    <div className="bg-white rounded-lg border border-border overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full ">
+                                <thead className="bg-[#2E3130] text-white">
+                                    <tr>
+                                        <th className="px-4 py-3 text-left text-xs font-medium tracking-wider border-r-2 border-gray-600 h-[50px]">
+                                            №
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium tracking-wider border-r-2 border-gray-600 h-[50px]">
+                                            Тип оплаты
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium tracking-wider border-r-2 border-gray-600 h-[50px]">
+                                            День
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium tracking-wider border-r-2 border-gray-600 h-[50px]">
+                                            Дата
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium tracking-wider border-r-2 border-gray-600 h-[50px]">
+                                            Сумма, ₸
+                                        </th>
+                                        <th className="px-4 py-3 text-center text-xs font-medium tracking-wider">
+                                            <svg
+                                                width="16"
+                                                height="16"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            >
+                                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                                            </svg>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                                     {(() => {
                                         let orderIdx = 0;
                                         return payments.map((payment) => {
@@ -375,43 +375,43 @@ const PaymentsTable: React.FC = () => {
                                             );
                                         });
                                     })()}
-                                </SortableContext>
-                            </DndContext>
 
-                            <tr className="border-b border-border">
-                                <td className="px-4 py-3 border-r-2 border-gray-200"></td>
-                                <td className="px-4 py-3 "></td>
-                                <td className="px-4 py-3 "></td>
-                                <td className="px-4 py-3 "></td>
-                                <td className="px-4 py-3 "></td>
-                                <td className="px-4 py-3 text-center">
-                                    <button
-                                        onClick={handleAdd}
-                                        className="text-primary hover:text-primary-dark transition-colors p-1"
-                                        title="Добавить новый транш"
-                                    >
-                                        <svg
-                                            width="16"
-                                            height="16"
-                                            viewBox="0 0 24 24"
-                                            fill="currentColor"
-                                        >
-                                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                                        </svg>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                {payments.length === 0 && (
-                    <div className="p-8 text-center text-text-secondary">
-                        <p>Нет данных для отображения</p>
+                                    <tr className="border-b border-border">
+                                        <td className="px-4 py-3 border-r-2 border-gray-200"></td>
+                                        <td className="px-4 py-3 "></td>
+                                        <td className="px-4 py-3 "></td>
+                                        <td className="px-4 py-3 "></td>
+                                        <td className="px-4 py-3 "></td>
+                                        <td className="px-4 py-3 text-center">
+                                            <button
+                                                onClick={handleAdd}
+                                                className="text-primary hover:text-primary-dark transition-colors p-1"
+                                                title="Добавить новый транш"
+                                            >
+                                                <svg
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="currentColor"
+                                                >
+                                                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                                                </svg>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                )}
-            </div>
-        </div>
+                </div>
+            </SortableContext>
+
+            {payments.length === 0 && (
+                <div className="p-8 text-center text-text-secondary">
+                    <p>Нет данных для отображения</p>
+                </div>
+            )}
+        </DndContext>
     );
 };
 

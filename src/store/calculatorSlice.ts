@@ -14,7 +14,7 @@ const initialForm: CalculatorForm = {
     paymentForm: "30%",
     deposit: 5000000,
     prepayment: Math.round(FULL_PRICE * 0.3),
-    prepaymentDate: new Date(2025, 7, 1),
+    prepaymentDate: new Date(2025, 7, 1).toISOString(), // Convert to ISO string
     quantityPayments: 12,
 };
 
@@ -41,25 +41,26 @@ const generatePayments = (
     fullPrice: number
 ): Payment[] => {
     const payments: Payment[] = [];
+    const prepaymentDate = new Date(form.prepaymentDate); // Convert string back to Date
 
     payments.push({
         id: generatePaymentId(),
         type: "Задаток" as PaymentType,
         day: 1,
-        date: new Date(2025, 7, 1),
+        date: new Date(2025, 7, 1).toISOString(),
         amount: form.deposit,
     });
 
     payments.push({
         id: generatePaymentId(),
         type: "ПВ" as PaymentType,
-        day: form.prepaymentDate.getDate(),
-        date: form.prepaymentDate,
+        day: prepaymentDate.getDate(),
+        date: prepaymentDate.toISOString(),
         amount: form.prepayment,
     });
 
     const trancheAmount = calculateTrancheAmount(form, fullPrice);
-    const firstTrancheDate = addMonths(form.prepaymentDate, 1);
+    const firstTrancheDate = addMonths(prepaymentDate, 1);
 
     for (let i = 0; i < form.quantityPayments; i++) {
         const trancheDate = addMonths(firstTrancheDate, i);
@@ -67,7 +68,7 @@ const generatePayments = (
             id: generatePaymentId(),
             type: "Транш" as PaymentType,
             day: trancheDate.getDate(),
-            date: trancheDate,
+            date: trancheDate.toISOString(),
             amount: Math.round(trancheAmount),
         });
     }
@@ -162,12 +163,11 @@ const calculatorSlice = createSlice({
             let trancheIndex = 0;
             state.payments.forEach((payment) => {
                 if (payment.type === "Транш") {
-                    const firstTrancheDate = addMonths(
-                        state.form.prepaymentDate,
-                        1
-                    );
-                    payment.date = addMonths(firstTrancheDate, trancheIndex);
-                    payment.day = payment.date.getDate();
+                    const prepaymentDate = new Date(state.form.prepaymentDate);
+                    const firstTrancheDate = addMonths(prepaymentDate, 1);
+                    const newDate = addMonths(firstTrancheDate, trancheIndex);
+                    payment.date = newDate.toISOString();
+                    payment.day = newDate.getDate();
                     trancheIndex++;
                 }
             });
@@ -189,15 +189,16 @@ const calculatorSlice = createSlice({
                 .filter((p) => p.type === "Транш")
                 .pop();
 
+            const prepaymentDate = new Date(state.form.prepaymentDate);
             const newDate = lastTranche
-                ? addMonths(lastTranche.date, 1)
-                : addMonths(state.form.prepaymentDate, 1);
+                ? addMonths(new Date(lastTranche.date), 1)
+                : addMonths(prepaymentDate, 1);
 
             state.payments.push({
                 id: generatePaymentId(),
                 type: "Транш",
                 day: newDate.getDate(),
-                date: newDate,
+                date: newDate.toISOString(),
                 amount: 0,
             });
 

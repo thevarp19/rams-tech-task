@@ -6,7 +6,7 @@ export interface Payment {
     id: string;
     type: PaymentType;
     day: number;
-    date: Date;
+    date: string; // Changed from Date to string for Redux serialization
     amount: number;
     isEditable?: boolean;
 }
@@ -15,7 +15,7 @@ export interface CalculatorForm {
     paymentForm: PaymentFormType;
     deposit: number;
     prepayment: number;
-    prepaymentDate: Date;
+    prepaymentDate: string; // Changed from Date to string for Redux serialization
     quantityPayments: number;
 }
 
@@ -37,8 +37,8 @@ export interface SummaryMetrics {
         amount: number;
         percent: number;
     }>;
-    simpleBurdenPercent: number; // Процентная нагрузка
-    calculateNPV: (rate?: number) => number; // функция для расчёта NPV на лету
+    simpleBurdenPercent: number;
+    calculateNPV: (rate?: number) => number;
 }
 
 export interface ToastMessage {
