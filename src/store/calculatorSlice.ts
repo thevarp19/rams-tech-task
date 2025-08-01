@@ -13,7 +13,7 @@ const APARTMENT_AREA = 45;
 const initialForm: CalculatorForm = {
     paymentForm: "30%",
     deposit: 5000000,
-    prepayment: 5000000,
+    prepayment: Math.round(FULL_PRICE * 0.3),
     prepaymentDate: new Date(2025, 7, 1),
     quantityPayments: 12,
 };
@@ -80,8 +80,17 @@ const calculatorSlice = createSlice({
     initialState,
     reducers: {
         updateForm: (state, action: PayloadAction<Partial<CalculatorForm>>) => {
-            state.form = { ...state.form, ...action.payload };
+            const updatedForm = { ...state.form, ...action.payload };
 
+            if (action.payload.paymentForm) {
+                const percentage =
+                    action.payload.paymentForm === "30%" ? 0.3 : 0.2;
+                updatedForm.prepayment = Math.round(
+                    state.fullPrice * percentage
+                );
+            }
+
+            state.form = updatedForm;
             state.payments = generatePayments(state.form, state.fullPrice);
         },
 

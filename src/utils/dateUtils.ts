@@ -5,10 +5,12 @@ export const addMonths = (date: Date, months: number): Date => {
 };
 
 export const formatDate = (date: Date): string => {
-    return date.toLocaleDateString("ru-RU", {
+    const formatted = date.toLocaleDateString("ru-RU", {
         month: "long",
         year: "numeric",
     });
+    // Делаем первую букву заглавной ("июнь" → "Июнь")
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 };
 
 export const getYear = (date: Date): number => {

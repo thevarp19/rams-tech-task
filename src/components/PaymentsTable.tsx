@@ -64,7 +64,7 @@ const SortableRow: React.FC<SortableRowProps> = ({
     };
 
     const handleAmountEdit = () => {
-        const numericValue = Number(editValue.replace(/\s/g, ""));
+        const numericValue = Number(editValue.replace(/\D/g, ""));
         if (isNaN(numericValue) || numericValue < 0) {
             setEditValue(originalValue);
             setIsEditing(false);
@@ -88,9 +88,9 @@ const SortableRow: React.FC<SortableRowProps> = ({
     };
 
     const startEditing = () => {
-        const formatted = formatCurrency(payment.amount);
-        setOriginalValue(formatted);
-        setEditValue(formatted);
+        const raw = payment.amount.toString();
+        setOriginalValue(raw);
+        setEditValue(raw);
         setIsEditing(true);
     };
 
@@ -130,31 +130,29 @@ const SortableRow: React.FC<SortableRowProps> = ({
             </td>
             <td className="px-4 py-3 text-text font-medium ">{payment.type}</td>
             <td className="px-4 py-3 text-text-secondary ">{payment.day}</td>
-            <td className="px-4 py-3 text-text-secondary ">
-                <span className="px-2 py-1 bg-gray-100 rounded text-sm">
+            <td className="px-4 py-3 text-text ">
+                <span className="px-2 py-1 rounded text-sm">
                     {formatDate(payment.date)}
                 </span>
             </td>
-            <td className="px-4 py-3 text-text ">
+            <td className="px-4 py-3 text-text">
                 {isEditing && payment.type === "Транш" ? (
                     <div className="bg-gray-50 border border-green-500 rounded p-2">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-2 ">
                             <input
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
                                 value={editValue}
                                 onChange={(e) => {
                                     const raw = e.target.value.replace(
-                                        /\s/g,
+                                        /\D/g,
                                         ""
                                     );
-                                    if (!/^\d*$/.test(raw)) return;
-                                    const formatted =
-                                        raw === ""
-                                            ? ""
-                                            : formatCurrency(Number(raw));
-                                    setEditValue(formatted);
+                                    setEditValue(raw);
                                 }}
                                 onKeyDown={handleKeyPress}
-                                className="flex-1 px-2 py-1 bg-transparent border-none focus:outline-none text-sm"
+                                className="flex-1 w-[120px] px-2 py-1 bg-transparent border-none focus:outline-none text-sm"
                                 autoFocus
                             />
                             <button

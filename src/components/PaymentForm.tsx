@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useEffect } from "react";
 import DatePicker from "react-datepicker";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import CalendarIcon from "../assets/Field/Dropdown + Title + Ava/Outline/General/Calendar.svg";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { updateForm } from "../store/calculatorSlice";
@@ -15,6 +15,8 @@ const PaymentForm: React.FC = () => {
     const {
         control,
         handleSubmit,
+        getValues,
+        setValue,
         formState: { errors },
     } = useForm<CalculatorFormData>({
         resolver: zodResolver(calculatorFormSchema),
@@ -31,6 +33,56 @@ const PaymentForm: React.FC = () => {
     const onSubmit = (data: CalculatorFormData) => {
         dispatch(updateForm(data));
     };
+
+    // Автоматический пересчет (дебаунс) – пересчитываем только, когда пользователь закончил взаимодействие со слайдером/формой
+    const watchedValues = useWatch({ control });
+    const debounceRef = React.useRef<number | null>(null);
+
+    useEffect(() => {
+        if (debounceRef.current) {
+            clearTimeout(debounceRef.current);
+        }
+        debounceRef.current = setTimeout(() => {
+            dispatch(
+                updateForm({
+                    paymentForm: watchedValues.paymentForm,
+                    deposit: watchedValues.deposit,
+                    prepaymentDate: watchedValues.prepaymentDate,
+                    quantityPayments: watchedValues.quantityPayments,
+                })
+            );
+        }, 300);
+
+        return () => {
+            if (debounceRef.current) {
+                clearTimeout(debounceRef.current);
+            }
+        };
+    }, [
+        watchedValues.paymentForm,
+        watchedValues.deposit,
+        watchedValues.prepaymentDate,
+        watchedValues.quantityPayments,
+        dispatch,
+    ]);
+
+    const watchedPaymentForm = useWatch({
+        control,
+        name: "paymentForm",
+        defaultValue: form.paymentForm,
+    });
+    const calculatedPrepayment = Math.round(
+        fullPrice * (watchedPaymentForm === "30%" ? 0.3 : 0.2)
+    );
+
+    useEffect(() => {
+        const currentPrepayment = getValues("prepayment");
+        if (currentPrepayment !== calculatedPrepayment) {
+            setValue("prepayment", calculatedPrepayment, {
+                shouldValidate: true,
+            });
+        }
+    }, [calculatedPrepayment, getValues, setValue]);
 
     return (
         <div className="bg-white h-fit">
@@ -130,23 +182,25 @@ const PaymentForm: React.FC = () => {
                         name="prepayment"
                         control={control}
                         render={({ field }) => {
+                            const displayValue = calculatedPrepayment;
                             const percent = Math.round(
-                                (field.value / fullPrice) * 100
+                                (displayValue / fullPrice) * 100
                             );
-                            const progress = (field.value / fullPrice) * 100;
+                            const progress = (displayValue / fullPrice) * 100;
+
                             return (
                                 <div className="space-y-3">
                                     <div className="flex justify-between">
                                         <div className="flex items-baseline space-x-1">
-                                            <h4 className="font-semibold">
-                                                {formatCurrency(field.value)}
+                                            <h4 className="font-semibold text-gray-500">
+                                                {formatCurrency(displayValue)}
                                             </h4>
                                             <span className="text-text-secondary">
                                                 ₸
                                             </span>
                                         </div>
                                         <div className="flex items-baseline space-x-1">
-                                            <h4 className="font-semibold">
+                                            <h4 className="font-semibold text-gray-500">
                                                 {percent}
                                             </h4>
                                             <span className="text-text-secondary">
@@ -160,13 +214,14 @@ const PaymentForm: React.FC = () => {
                                             min={0}
                                             max={fullPrice}
                                             step={10000}
-                                            value={field.value}
+                                            disabled
+                                            value={displayValue}
                                             onChange={(e) =>
                                                 field.onChange(
                                                     Number(e.target.value)
                                                 )
                                             }
-                                            className="slider w-full"
+                                            className="slider w-full opacity-60 cursor-not-allowed"
                                             style={
                                                 {
                                                     "--progress": `${progress}%`,

@@ -12,9 +12,7 @@ export const calculatorFormSchema = z
             .min(0, "Задаток не может быть отрицательным")
             .max(100000000, "Задаток слишком большой"),
         prepayment: z
-            .number({
-                message: "ПВ обязателен",
-            })
+            .number()
             .min(0, "ПВ не может быть отрицательным")
             .max(100000000, "ПВ слишком большой"),
         prepaymentDate: z
