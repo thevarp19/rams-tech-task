@@ -34,7 +34,6 @@ const PaymentForm: React.FC = () => {
         dispatch(updateForm(data));
     };
 
-    // Автоматический пересчет (дебаунс) – пересчитываем только, когда пользователь закончил взаимодействие со слайдером/формой
     const watchedValues = useWatch({ control });
     const debounceRef = React.useRef<number | null>(null);
 
@@ -119,10 +118,14 @@ const PaymentForm: React.FC = () => {
                         name="deposit"
                         control={control}
                         render={({ field }) => {
+                            const maxDeposit = fullPrice - calculatedPrepayment;
+                            if (field.value > maxDeposit) {
+                                field.onChange(maxDeposit);
+                            }
                             const percent = Math.round(
                                 (field.value / fullPrice) * 100
                             );
-                            const progress = (field.value / fullPrice) * 100;
+                            const progress = (field.value / maxDeposit) * 100;
                             return (
                                 <div className="space-y-3">
                                     <div className="flex justify-between">

@@ -36,7 +36,9 @@ export const calculateSummaryMetrics = (
 
     const yearlyBreakdown = [];
     for (let year = minYear; year <= maxYear; year++) {
-        const yearPayments = payments.filter((p) => isDateInYear(p.date, year));
+        const yearPayments = payments.filter(
+            (p) => p.type === "Транш" && isDateInYear(p.date, year)
+        );
         const yearAmount = yearPayments.reduce((sum, p) => sum + p.amount, 0);
         const yearPercent = +((yearAmount / fullPrice) * 100).toFixed(1);
 
@@ -49,12 +51,32 @@ export const calculateSummaryMetrics = (
         }
     }
 
+    const totalPayments = payments.reduce((sum, p) => sum + p.amount, 0);
+    const simpleBurdenPercent = +(
+        (totalPayments / fullPrice - 1) *
+        100
+    ).toFixed(1);
+
+    const calculateNPV = (rate?: number): number => {
+        if (rate === undefined) {
+            return -fullPrice + totalPayments;
+        }
+        let npv = -fullPrice;
+        payments.forEach((p, idx) => {
+            const period = idx + 1; // считаем равные периоды между платежами
+            npv += p.amount / Math.pow(1 + rate, period);
+        });
+        return Math.round(npv);
+    };
+
     return {
         totalCost: fullPrice,
         pricePerSqm,
         depositPlusPrepayment,
         depositPlusPrepaymentPercent,
         yearlyBreakdown,
+        simpleBurdenPercent,
+        calculateNPV,
     };
 };
 

@@ -171,6 +171,17 @@ const calculatorSlice = createSlice({
                     trancheIndex++;
                 }
             });
+
+            // // Режим "Равномерно" – после d&d пересчитываем суммы заново
+            // const tranchePayments = state.payments.filter(
+            //     (p) => p.type === "Транш"
+            // );
+            // const remainingAmount =
+            //     state.fullPrice - state.form.deposit - state.form.prepayment;
+            // const trancheAmount = remainingAmount / tranchePayments.length;
+            // tranchePayments.forEach((p) => {
+            //     p.amount = Math.round(trancheAmount);
+            // });
         },
 
         addPayment: (state) => {

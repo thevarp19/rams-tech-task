@@ -70,6 +70,24 @@ const SummaryPanel: React.FC = () => {
                 ))}
             </div>
 
+            {/* Процентная нагрузка */}
+            <div className="bg-white rounded-lg px-3 py-2">
+                <h3 className="text-sm text-[#343434] mb-2">
+                    Процентная нагрузка
+                </h3>
+                <p className="text-lg font-bold text-[#024638]">
+                    {metrics.simpleBurdenPercent}%
+                </p>
+            </div>
+
+            {/* NPV без учёта ставки (r = 0) */}
+            <div className="bg-white rounded-lg px-3 py-2">
+                <h3 className="text-sm text-[#343434] mb-2">NPV (r = 0)</h3>
+                <p className="text-lg font-bold text-[#024638]">
+                    {formatCurrencyWithSymbol(metrics.calculateNPV())}
+                </p>
+            </div>
+
             <div className="bg-border-light rounded-lg p-4 text-center">
                 <div className="space-y-2 text-sm text-text-secondary">
                     <p>

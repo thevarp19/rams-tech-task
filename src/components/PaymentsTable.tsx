@@ -313,7 +313,7 @@ const PaymentsTable: React.FC = () => {
             <div className="bg-white rounded-lg border border-border overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full ">
-                        <thead className="bg-gray-800 text-white">
+                        <thead className="bg-[#2E3130] text-white">
                             <tr>
                                 <th className="px-4 py-3 text-left text-xs font-medium tracking-wider border-r-2 border-gray-600 h-[50px]">
                                     №

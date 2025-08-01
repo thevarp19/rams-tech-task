@@ -9,7 +9,7 @@ export const formatDate = (date: Date): string => {
         month: "long",
         year: "numeric",
     });
-    // Делаем первую букву заглавной ("июнь" → "Июнь")
+
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 };
 

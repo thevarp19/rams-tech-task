@@ -37,6 +37,8 @@ export interface SummaryMetrics {
         amount: number;
         percent: number;
     }>;
+    simpleBurdenPercent: number; // Процентная нагрузка
+    calculateNPV: (rate?: number) => number; // функция для расчёта NPV на лету
 }
 
 export interface ToastMessage {
